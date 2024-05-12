@@ -1,0 +1,10 @@
+import pandas as pd;
+
+data = [3, 1, 5, 1, 2, 7]
+indices = ['a', 'b', 'c', 'd', 'e', 'f']
+
+srs = pd.Series(data=data, index=indices)
+
+print(srs)
+print(srs['c'])
+print(srs['d':])
