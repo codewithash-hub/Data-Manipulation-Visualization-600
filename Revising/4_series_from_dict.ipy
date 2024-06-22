@@ -8,11 +8,9 @@ population = {
     "Northern Cape": 93233
 }
 
-ser = pd.Series(population)
-print(ser)
+population = pd.Series(population)
+# print(population)
 
-print(ser.iloc[0][1])
-print(ser)
-
-ser.iloc[0] = 294355
-print(ser)
+print(population.iloc[0][1])
+population.iloc[2] = population.iloc[2] = 7515854
+print(population)
