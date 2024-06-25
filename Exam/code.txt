@@ -1,0 +1,125 @@
+List and explain the different ways to join datasets.
+Inner Join:
+An inner join combines rows from two datasets based on a common key and includes only the rows with matching values in both datasets.
+Rows with non-matching keys in either dataset are excluded from the result.
+Outer Join:
+An outer join combines rows from both datasets, including all rows from both datasets.
+Rows with matching keys are combined into a single row, while rows with non-matching keys are included with NaN values in the columns from the dataset where there is no match.
+Left Join:
+A left join combines rows from the left dataset with matching rows from the right dataset based on a common key.
+All rows from the left dataset are included in the result, even if there are no matching rows in the right dataset.
+
+Donation
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+start_date = pd.to_datetime('2022-01-01')
+end_date = pd.to_datetime('2023-12-31')
+date = pd.date_range(start=start_date, end=end_date)
+
+days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+amount_donated = np.random.randint(10, 1001, size=2000)
+
+gender = np.random.choice(['Male', 'Female'], size=2000)
+
+data = {
+    'Date': np.random.choice(date, size=2000),
+    'Day of Week': np.random.choice(days, size=2000),
+    'Amount Donated': amount_donated,
+    'Gender': gender
+}
+
+df = pd.DataFrame(data)
+
+df['Date'] = pd.to_datetime(df['Date'])
+
+df.tail()
+
+# Create a swarm plot using seaborn
+plt.figure(figsize=(12, 8))
+sns.swarmplot(x='Day of Week', y='Amount Donated', hue='Gender', data=df, dodge=True, palette='Set2')
+plt.title('Distribution of Donations by Gender on Each Day')
+plt.xlabel('Day of Week')
+plt.ylabel('Amount Donated')
+plt.legend(title='Gender', loc='best')
+plt.grid(True)
+# plt.tight_layout()
+plt.show()
+
+# Calculate average amount donated each day of the week for each month
+df['Month'] = df['Date'].dt.month_name()
+heatmap_data = df.groupby(['Month', 'Day of Week'])['Amount Donated'].mean().reset_index()
+
+# Pivot table for heatmap
+heatmap_data = heatmap_data.pivot(index='Month', columns='Day of Week', values='Amount Donated')
+
+# Order months by calendar order
+month_order = ['January', 'February', 'March', 'April', 'May', 'June', 
+               'July', 'August', 'September', 'October', 'November', 'December']
+heatmap_data = heatmap_data.reindex(month_order)
+
+# Create heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(heatmap_data, annot=True, fmt='.0f', cmap='YlGnBu')
+plt.title('Average Amount Donated Each Day of the Week for Each Month')
+plt.xlabel('Day of Week')
+plt.ylabel('Month')
+plt.tight_layout()
+plt.show()
+
+Cereal
+import pandas as pd
+import plotly.express as px
+import matplotlib.pyplot as plt
+
+data = pd.read_csv('cereal.csv')
+data.head()
+
+data['combined_score'] = data.sugars + data.fat + data.sodium
+data.head()
+
+fig = px.scatter(
+    data, x='sugars', y='sodium', size='fat', size_max=30, 
+    labels={'sugars': 'Sugars', 'sodium': 'Sodium', 'fat': 'Fat'},
+    title='Cereal Comparison',
+    template='plotly_dark',
+    color='combined_score'
+)
+
+fig.show()
+
+fig2 = px.line(
+    data, x='name', y='calories', title='Calorie Content of Cereals',
+    labels={'name': 'Cereal Name', 'calories': 'Calories'},
+    line_shape='spline',
+)
+
+fig2.show()
+
+phone_sale
+import random
+import pandas as pd
+
+# Define possible phone names
+phone_names = ["iPhone 15", "Samsung Galaxy S24", "Google Pixel 7", "OnePlus 10", "Xiaomi Mi 12"]
+columns = ['Phone Name', 'Contract', 'Account_up_to_date']
+
+# Generate CSV data
+data = []
+for i in range(500):
+    phone_name = random.choice(phone_names)
+    contract = random.choice([12, 24, 36])
+    account_up_to_date = random.choice(["Yes", "No"])
+    data.append([phone_name, contract, account_up_to_date])
+
+# Save DataFrame to CSV 
+df = pd.DataFrame(data, columns=columns)
+csv_file_path = 'phone_sales.csv' 
+df.to_csv(csv_file_path, index=False)
+
+sales_df = pd.read_csv('phone_sales.csv')
+sales_df = pd.DataFrame(sales_df)
+sales_df
